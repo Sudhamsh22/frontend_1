@@ -1,5 +1,4 @@
 'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -44,7 +43,7 @@ export function LoginForm() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        'https://autotune-pg-sql.onrender.com/auth/login',
         {
           method: 'POST',
           headers: {
@@ -67,7 +66,6 @@ export function LoginForm() {
         title: 'Login Successful',
         description: "You've been signed in.",
       });
-
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
@@ -96,7 +94,6 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="password"
@@ -110,7 +107,6 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Sign In
