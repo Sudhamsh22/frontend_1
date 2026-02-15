@@ -1,5 +1,4 @@
 'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -45,50 +44,47 @@ export function SignupForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-  setIsLoading(true);
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      }
-    );
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        'https://autotune-pg-sql.onrender.com/auth/signup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
-    if (!response.ok) {
-      let errorMessage = `Signup failed: ${response.statusText}`;
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
-      } catch {
-        // backend returned HTML or empty response
+      if (!response.ok) {
+        let errorMessage = `Signup failed: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          // backend returned HTML or empty response
+        }
+        throw new Error(errorMessage);
       }
-      throw new Error(errorMessage);
+
+      const responseData = await response.json();
+      toast({
+        title: 'Account Created',
+        description:
+          responseData.message || 'You have been successfully signed up.',
+      });
+      router.push('/login');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Signup Failed',
+        description: error.message || 'An unexpected error occurred.',
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    const responseData = await response.json();
-
-    toast({
-      title: 'Account Created',
-      description:
-        responseData.message || 'You have been successfully signed up.',
-    });
-
-    router.push('/login');
-  } catch (error: any) {
-    toast({
-      variant: 'destructive',
-      title: 'Signup Failed',
-      description: error.message || 'An unexpected error occurred.',
-    });
-  } finally {
-    setIsLoading(false);
   }
-}
-
 
   return (
     <Form {...form}>
